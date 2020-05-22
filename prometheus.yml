@@ -1,0 +1,11 @@
+global:
+  scrape_interval:     15s
+  external_labels:
+    monitor: 'wrappy-monitor'
+
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['moleculer.networkgateway.net:3030']

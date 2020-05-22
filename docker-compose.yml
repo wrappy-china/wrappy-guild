@@ -1,0 +1,116 @@
+version: "3.0"
+
+services:
+
+  gateway:
+    build:
+      context: .
+    image: wrappy
+    env_file: docker-compose.env
+    environment:
+      SERVICES: gateway
+      PORT: 3000
+    links:
+      - nats
+    depends_on:
+      - nats
+    labels:
+      - "traefik.enable=true"   
+      - "traefik.backend=api"
+      - "traefik.port=3000"
+      - "traefik.frontend.entryPoints=http"
+      - "traefik.frontend.rule=PathPrefix:/"
+    networks:
+      - internal
+
+  core2:
+    build:
+      context: .
+    image: wrappy
+    env_file: docker-compose.env
+    environment:
+      SERVICES: core
+    links:
+      - nats
+    depends_on:
+      - nats
+    networks:
+      - internal
+
+  core:
+    build:
+      context: .
+    image: wrappy
+    env_file: docker-compose.env
+    environment:
+      SERVICES: core
+    links:
+      - nats
+    depends_on:
+      - nats
+    networks:
+      - internal      
+
+  prometheus:
+    build:
+      context: .
+    image: wrappy
+    env_file: docker-compose.env
+    environment:
+      SERVICES: prometheus
+    links:
+      - nats
+    depends_on:
+      - nats
+    networks:
+      - internal    
+      - default
+    ports:
+      - "3030:3030"  
+
+  jaeger:
+    build:
+      context: .
+    image: wrappy
+    env_file: docker-compose.env
+    environment:
+      SERVICES: jaeger
+    links:
+      - nats
+    depends_on:
+      - nats
+    networks:
+      - internal      
+
+  nats:
+    image: nats
+    networks:
+      - internal
+      - default
+    ports:
+      - "4222:4222"  
+
+  traefik:
+    image: traefik:v1.7.20-alpine
+    container_name: traefik
+    command:
+      - "--api"
+      - "--web"
+      - "--docker"
+      - "--docker.watch"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=traefik"
+      - "traefik.port=8080"
+    ports:
+      - 3000:80
+      - 3001:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/null:/traefik.toml
+    networks:
+      - internal
+      - default
+
+networks:
+  internal:
