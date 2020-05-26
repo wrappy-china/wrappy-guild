@@ -48,7 +48,7 @@ spec:
     spec:
       containers:
         - name: wrappy-core
-          image: aguel/wrappy
+          image: zhuang6793/wrappy
           imagePullPolicy: Always
           env:
             - name: SERVICEDIR
@@ -59,6 +59,40 @@ spec:
               value: nats://nats:4222
 
 ---
+
+#################################
+# Wrappy Auth Service           #
+#################################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wrappy-auth
+  labels:
+    app: wrappy-auth
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: wrappy-auth
+  template:
+    metadata:
+      labels:
+        app: wrappy-auth
+    spec:
+      containers:
+        - name: wrappy-auth
+          image: zhuang6793/wrappy
+          imagePullPolicy: Always
+          env:
+            - name: SERVICEDIR
+              value: services
+            - name: SERVICES
+              value: auth
+            - name: TRANSPORTER
+              value: nats://nats:4222
+---
+
 #################################
 # Wrappy API GAteway Service    #
 #################################
@@ -80,7 +114,7 @@ spec:
     spec:
       containers:
         - name: wrappy-gateway
-          image: aguel/wrappy
+          image: zhuang6793/wrappy
           imagePullPolicy: Always
           env:
             - name: SERVICEDIR
