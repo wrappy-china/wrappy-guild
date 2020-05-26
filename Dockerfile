@@ -1,4 +1,5 @@
-FROM node:10-alpine
+FROM node:10.20.1-stretch-slim
+
 
 RUN mkdir /app
 WORKDIR /app
