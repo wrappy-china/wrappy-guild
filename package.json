@@ -40,7 +40,7 @@
     "moleculer-console-tracer": "^0.2.2",
     "moleculer-jaeger": "^0.2.2",
     "moleculer-prometheus": "^0.2.4",
-    "moleculer-web": "^0.8.5",
+    "moleculer-web": "^0.10.4",
     "nats": "^1.0.1"
   },
   "engines": {
